@@ -96,10 +96,11 @@ def monthly_category(request, year, month):
         return HttpResponseRedirect('/admin')
     user = request.user
     address = user.profile.address
+    total = address.monthly_total(year, month)
     header_date = date(int(year), int(month), 1)
     summary = address.category_summary(year, month)
     return render_to_response('monthly_category.html',{'summary':summary, \
-            'year':year, 'month':month, 'header_date':header_date
+            'year':year, 'month':month, 'total':total, 'header_date':header_date
         },context_instance=RequestContext(request))
 
 
@@ -110,9 +111,10 @@ def category_transaction(request, category_name, year, month):
     user = request.user
     address = user.profile.address
     category_transaction = address.category_transaction(category_name, year, month)
+    total = address.monthly_total(year, month)
     header_date = date(int(year), int(month), 1)
     summary = address.category_summary(year, month)
-    return render_to_response('category_transaction.html',{'year':year, 'month':month, 'summary':summary,'category':category_name,'category_transaction':category_transaction, 'header_date':header_date},context_instance=RequestContext(request))
+    return render_to_response('category_transaction.html',{'year':year, 'month':month, 'summary':summary,'category':category_name,'category_transaction':category_transaction, 'total':total, 'header_date':header_date},context_instance=RequestContext(request))
 
 @csrf_protect
 @login_required

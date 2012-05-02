@@ -56,6 +56,8 @@ def avg_diff(request):
     if request.user.is_superuser:
         return HttpResponseRedirect('/admin')
     user = request.user
+    if user.profile.status == 'left':
+        return HttpResponseRedirect('/accounts/logout/')
     if not user.profile.has_address():
         return HttpResponseRedirect('/profile/address/edit/')
     form = CalendarForm(request.POST or None)

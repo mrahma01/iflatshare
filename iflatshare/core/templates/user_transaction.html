@@ -21,8 +21,8 @@
 <table border="1" cellpadding="5" width="500px" id="sort_table">
     <thead>
     <tr style="background:#000;"> 
-        <td><a class="white" href={% url core.views.user_transaction user year|lastyear:month month|lastmonth%}>&lt;&lt; last month</a></td>
-        <td colspan="3" style="text-align:right"> <a class="white" href={% url core.views.user_transaction user year|nextyear:month month|nextmonth %}>next month &gt;&gt;</a></td>
+        <td><a class="white" href={% url core.views.user_transaction user_name year|lastyear:month month|lastmonth%}>&lt;&lt; last month</a></td>
+        <td colspan="3" style="text-align:right"> <a class="white" href={% url core.views.user_transaction user_name year|nextyear:month month|nextmonth %}>next month &gt;&gt;</a></td>
     </tr>
     <tr bgcolor="#000000" align="center">
         <th><a href="#">Item Name</a></th>

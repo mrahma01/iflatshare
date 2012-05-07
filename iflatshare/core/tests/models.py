@@ -34,14 +34,14 @@ class AddressTestCase(TestCase):
         Test the monthly avg for this address
         """
         address = Address.objects.get(pk=1)
-        self.failUnlessEqual(Decimal('6.517'), address.monthly_avg(2010, 3))
+        self.failUnlessEqual(Decimal('3.293'), address.monthly_avg(2010, 3))
 
     def test_monthly_total(self):
         """
         Test Monthly total for the specific address
         """
         address = Address.objects.get(pk=1)
-        self.failUnlessEqual(Decimal('19.55'), address.monthly_total(2010, 3))
+        self.failUnlessEqual(Decimal('9.88'), address.monthly_total(2010, 3))
     
     def test_monthly_transaction(self):
         """
@@ -74,7 +74,7 @@ class AddressTestCase(TestCase):
         year = 2012
         self.failUnlessEqual(address.get_current_users(year, month).count(), 3, "must have 3 users on February 2012")
         month = 4
-        self.failUnlessEqual(address.get_current_users(year, month).count(), 4, "must have 4 user on April 2012")
+        self.failUnlessEqual(address.get_current_users(year, month).count(), 3, "must have 3 user on April 2012")
         year = 2011
         self.failUnlessEqual(address.get_current_users(year, month).count(), 3, "must have 3 user on April 2011")
  

@@ -75,8 +75,14 @@ def avg_diff(request):
     when = date.today()
     today = when.strftime("%A %d, %B %Y")
     header_date = date(int(year), int(month), 1)
-    avg_diff = dict((usr.username, {'total': usr.profile.monthly_total(year, month), 'diff': usr.profile.monthly_total(year,month)-address.monthly_avg(year,month)}) for usr in users) 
-    return render_to_response('avg_diff.html', {'form': form, 'avg_diff': avg_diff, 'avg': avg, 'total': total,'year':year, 'month':month, 'today':today, 'header_date':header_date},context_instance=RequestContext(request))
+    avg_diff = dict((usr.username, \
+            {'total': usr.profile.monthly_total(year, month), \
+            'diff': usr.profile.monthly_total(year,month)-address.monthly_avg(year,month), \
+            'absent': usr.profile.is_absent(year,month)}) for usr in users) 
+    return render_to_response('avg_diff.html', \
+            {'form': form, 'avg_diff': avg_diff, 'avg': avg, 'total': total, \
+            'year':year, 'month':month, 'today':today, \
+            'header_date':header_date},context_instance=RequestContext(request))
 
 @login_required
 def user_transaction(request, user_name, year, month):

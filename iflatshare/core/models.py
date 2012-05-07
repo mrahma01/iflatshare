@@ -48,10 +48,12 @@ class Address(models.Model):
         return monthly_avg
 
     def monthly_total(self, year, month):
-        queryset = Item.objects.monthly_transaction(year, month).filter(user__profile__address=self.pk)
-        if not queryset:
-            return 0
-        return queryset.aggregate(Sum('price'))['price__sum']
+        d = date(int(year), int(month), 1)
+        queryset = Item.objects.monthly_transaction(year, month).filter(
+                        Q(user__profile__address=self),
+                        Q(user__profile__absentprofile__user__isnull=True)
+                        ).aggregate(Sum('price'))['price__sum']
+        return queryset
 
     def monthly_transaction(self, year, month):
         return Item.objects.monthly_transaction(year, month).filter(user__profile__address=self)
@@ -68,16 +70,22 @@ class Address(models.Model):
         """
         return the users living on the current month/year
         """
-        d = date(int(year), int(month), 1)
-        return Address.objects.filter(
-                Q(profile__address=self),
-                Q(profile__date_joined__lte=d),
-                Q(profile__date_left__isnull=True) | Q(profile__date_left__gt=d)  
-            )
+        return Profile.objects.total_flatmate(year, month).filter(
+                Q(address=self),
+                )
 
 class ProfileManager(models.Manager):
     def create_from_user(self, user):
         self.create(user=user)
+
+    def total_flatmate(self, year, month):
+        d = date(int(year), int(month), 1)
+        queryset = Profile.objects.filter(
+            Q(date_joined__lte=d),
+            Q(date_left__isnull=True) | Q(date_left__gt=d),
+            ~Q(absentprofile__date_absent=d)
+        )    
+        return queryset
 
 class Profile(models.Model):
     user = models.OneToOneField(AuthUser)
@@ -100,7 +108,11 @@ class Profile(models.Model):
         if self.status == 'present':
             return AuthUser.objects.filter(username=self.user)
 
-    def get_housemates(self, year, month):
+    def get_housemates(self, year=None, month=None):
+        if not year:
+            year = date.today().year 
+            month = date.today().month
+
         d = date(int(year), int(month), 1)
         return AuthUser.objects.filter(
             Q(profile__address=self.address),
@@ -108,9 +120,29 @@ class Profile(models.Model):
             Q(profile__date_left__isnull=True) | Q(profile__date_left__gt=d)
         )
 
+    def get_housemate_profiles(self, year=None, month=None):
+        if not year:
+            year = date.today().year 
+            month = date.today().month
+        d = date(int(year), int(month), 1)
+
+        return Profile.objects.filter(
+            Q(address=self.address),
+            Q(date_joined__lte=d),
+            Q(date_left__isnull=True) | Q(date_left__gt=d)
+            )
+                
     def get_admin(self):
         if self.status == 'present':
             return AuthUser.objects.filter(profile__address=self.address, profile__is_admin=True)[0]
+
+    def is_absent(self, year, month):
+        d = date(int(year), int(month), 1)
+        isabsent = self.absentprofile_set.filter(date_absent=d)
+        if isabsent:
+            return True
+        return False
+
 
     def monthly_total(self, year, month):
         queryset = self.user.item_set.filter(purchase_date__year=year, purchase_date__month=month).aggregate(Sum('price'))['price__sum']
@@ -126,7 +158,6 @@ class Profile(models.Model):
 
     def was_housemate_of(self, other_user):
         return self.address == other_user.profile.address and not other_user.profile.date_left == None
-
 
     def has_address(self):
         try:
@@ -158,6 +189,19 @@ class Profile(models.Model):
         if self.status == 'present':
             if self.date_left:
                 raise ValidationError('Date left must be empty')
+
+class AbsentProfile(models.Model):
+    user = models.ForeignKey(Profile)
+    date_absent = models.DateField(blank=True, null=True)
+
+    def __unicode__(self):
+        return u'%s, %s' % (unicode(self.user), self.date_absent)
+
+    def clean(self):
+        if self.date_absent:
+            month = self.date_absent.month
+            d = date.today()
+            self.date_absent = d.strftime("%Y-"+str(month)+"-01")
 
 class ItemManager(models.Manager):
     def monthly_total(self, year, month):

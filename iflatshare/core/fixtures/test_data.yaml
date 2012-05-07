@@ -34,6 +34,9 @@
 -   fields: {category: 1, name: Tea, price: '9', purchase_date: 2012-03-20, user: 6}
     model: core.item
     pk: 11  
+-   fields: {category: 1, name: Food, price: '29', purchase_date: 2012-04-20, user: 2}
+    model: core.item
+    pk: 12 
 - fields: {city: London, country: UK, house_number: 116A, post_code: HA8
       0BB, street_name: Burnt Oak Broaway}
   model: core.address
@@ -200,4 +203,7 @@
 -   fields: {address: 1, date_joined: 2012-04-01, date_left: null, is_admin: false,
         status: present, user: 9}
     model: core.profile
-    pk: 7  
+    pk: 7 
+-   fields: {date_absent: 2012-04-01, user: 2}
+    model: core.absentprofile
+    pk: 1    

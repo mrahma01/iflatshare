@@ -28,9 +28,10 @@
   <tbody>  
 {% for user, data in avg_diff.items %}
     <tr bgcolor="#336666" align="center">
-        <td align="left"><a href=/user/{{user}}/{{year}}/{{month}}>{{ user|upper }}</a></td>
+        <td align="left"><a href=/user/{{user}}/{{year}}/{{month}}>{{ user|upper }}</a>
+        </td>
         <td>{{ data.total }}</td>
-        <td>{{ data.diff }}</td>
+        <td>{% if data.absent %} Absent this month {% else %}{{ data.diff }}{% endif %}</td>
 {% endfor %}
     </tr><tr><td colspan="3"><A HREF="javascript:window.print()">Click to Print This Report</A></td></tr>
   </table>

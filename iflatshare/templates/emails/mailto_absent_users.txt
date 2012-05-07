@@ -1,0 +1,13 @@
+Dear {{ user }}
+
+Your were absent in {{month}} {{year}}.
+The total spent of your [{{address}}] flat was {{monthly_total}} .
+The average spent was {{avg}}
+You are not required to make any payment.
+
+For more detail please visit {{url}}
+
+Kind Regards,
+Support Team
+iFlatshare
+

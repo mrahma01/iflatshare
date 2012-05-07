@@ -54,8 +54,12 @@ class Command(NoArgsCommand):
                                 'adverb': 'more than',
                             })
                     if not user.profile.is_admin:
-                        mailbody = render_to_string( \
-                                'emails/monthly_report.txt', context)
+                        if user.profile.is_absent(year, month):
+                            mailbody = render_to_string( \
+                                    'emails/mailto_absent_users.txt', context)
+                        else:
+                            mailbody = render_to_string( \
+                                    'emails/monthly_report.txt', context)
                     else:
                         mailbody = render_to_string( \
                                 'emails/monthly_admin_report.txt', context)

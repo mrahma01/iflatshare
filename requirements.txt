@@ -3,3 +3,4 @@ PyYAML==3.10
 South==0.7.3
 django-envelope==0.3.1
 django-honeypot==0.3.0
+django-piston==0.2.3

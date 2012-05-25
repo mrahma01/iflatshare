@@ -51,7 +51,7 @@ class Address(models.Model):
         d = date(int(year), int(month), 1)
         queryset = Item.objects.monthly_transaction(year, month).filter(
                         Q(user__profile__address=self),
-                        Q(user__profile__absentprofile__user__isnull=True)
+                        ~Q(user__profile__absentprofile__date_absent=d)
                         ).aggregate(Sum('price'))['price__sum']
         return queryset
 

@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q
 from decimal import *
 from datetime import date
+import datetime
 
 class Category(models.Model):
     name = models.CharField(max_length=200, unique=True)
@@ -96,7 +97,7 @@ class Profile(models.Model):
     )
     status = models.CharField(max_length=7, choices=CHOICES)
     is_admin = models.BooleanField(default=False)
-    date_joined = models.DateField(default='', blank=True, null=True)
+    date_joined = models.DateField(default=datetime.date.today(), blank=True, null=True)
     date_left = models.DateField(blank=True, null=True)
 
     objects = ProfileManager()

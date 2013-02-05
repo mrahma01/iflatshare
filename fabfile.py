@@ -48,7 +48,7 @@ def update_dependencies():
     """Update external dependencies on remote host"""
     with cd(env.path):
         run('source bin/activate')
-        run('sudo pip install -E %(path)s --requirement %(path)s/current/requirements.txt' % env)
+        run('sudo pip install -r %(path)s/current/requirements.txt' % env)
 
 def bootstrap():
     """Prepare remote host"""
